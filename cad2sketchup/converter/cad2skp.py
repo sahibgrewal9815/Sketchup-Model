@@ -618,7 +618,7 @@ def write_ruby(layers: dict[str, LayerGeom], path: Path, k: float, title: str):
     path.write_text("\n".join(L) + "\n")
 
 
-def write_preview(layers: dict[str, LayerGeom], path: Path, title: str):
+def write_preview(layers: dict[str, LayerGeom], path: Path, title: str, elev: float = 32, azim: float = -55):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -644,7 +644,7 @@ def write_preview(layers: dict[str, LayerGeom], path: Path, title: str):
         c = [(max(v) + min(v)) / 2 for v in (xs, ys, zs)]
         r = max(max(xs) - min(xs), max(ys) - min(ys), max(zs) - min(zs)) / 2 or 1
         ax.set_xlim(c[0] - r, c[0] + r); ax.set_ylim(c[1] - r, c[1] + r); ax.set_zlim(c[2] - r * 0.3, c[2] + r * 1.7)
-    ax.view_init(elev=32, azim=-55)
+    ax.view_init(elev=elev, azim=azim)
     ax.set_axis_off()
     ax.set_title(title, fontsize=11)
     fig.tight_layout()

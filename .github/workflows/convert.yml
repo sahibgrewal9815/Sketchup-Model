@@ -6,6 +6,7 @@ on:
     paths:
       - "cad2sketchup/input/**"
       - "cad2sketchup/config/layers.yml"
+      - "cad2sketchup/tools/**"
   workflow_dispatch:
     inputs:
       file:
@@ -80,6 +81,10 @@ jobs:
           target="input"
           if [ -n "${{ github.event.inputs.file }}" ]; then target="${{ github.event.inputs.file }}"; fi
           python converter/cad2skp.py "$target" --outdir output --config config/layers.yml
+
+      - name: Build Dilbagh 3D model
+        if: hashFiles('cad2sketchup/input/Dilbagh.dwg') != ''
+        run: python tools/dilbagh_3d.py input/Dilbagh.dwg output
 
       - name: Smoke-test generated SketchUp scripts
         run: |

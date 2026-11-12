@@ -1,0 +1,39 @@
+{
+  "source": "Dilbagh.dwg",
+  "units": "inches",
+  "settings": {
+    "wall_height": 120,
+    "boundary_wall_height": 60,
+    "sill_height": 36,
+    "lintel_height": 84,
+    "slab_thickness": 5,
+    "parapet_height": 36,
+    "parapet_thickness": 4.5,
+    "wall_min": 3,
+    "wall_max": 15,
+    "plan_window": [
+      58262,
+      -41175,
+      58919,
+      -40210
+    ]
+  },
+  "counts": {
+    "Walls": 13,
+    "Boundary wall": 6,
+    "Window sills & lintels": 22,
+    "Door lintels": 10,
+    "Glass": 11,
+    "Roof slab": 2,
+    "Parapet": 2,
+    "Porch": 1,
+    "Columns": 4,
+    "Plot": 1,
+    "Plan lines": 0
+  },
+  "plot_size_ft": [
+    50.5,
+    76.2
+  ],
+  "note": "Walls detected automatically from parallel lines; check doors/windows and fix in SketchUp."
+}

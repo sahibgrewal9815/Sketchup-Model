@@ -3,3 +3,4 @@ pycollada>=0.8
 numpy>=1.24
 matplotlib>=3.7
 PyYAML>=6.0
+shapely>=2.0

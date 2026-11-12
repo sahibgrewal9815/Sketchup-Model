@@ -92,3 +92,20 @@ tests/sketchup_stub.rb          fake SketchUp API used to smoke-test .rb output 
 input/                          put drawings here
 output/                         results are committed here
 ```
+
+## Dilbagh 3D model
+
+`tools/dilbagh_3d.py` turns the ground-floor plan in `input/Dilbagh.dwg` into a 3D house
+(`output/Dilbagh_3D.*`). Walls are on layer "0" with everything else in that drawing, so they
+are detected geometrically: two parallel lines 3"–15" apart form a wall. Breaks along a wall
+become openings — a window (sill + lintel + glass) if window-frame lines are inside it, otherwise
+a door (lintel only). Heights are set in `SETTINGS` at the top of the script:
+
+| Setting | Default |
+|---|---|
+| wall_height | 120" (10'-0") |
+| boundary_wall_height | 60" (5'-0") |
+| sill_height / lintel_height | 36" / 84" |
+| slab_thickness, parapet_height | 5", 36" |
+
+Edit those numbers on GitHub and commit — the Action rebuilds the model.
