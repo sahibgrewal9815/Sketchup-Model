@@ -1,0 +1,55 @@
+# Layer rules: how to turn a 2D CAD drawing into a 3D SketchUp model.
+#
+# Each key under `layers:` is a layer-name pattern (wildcards *, ?; case-insensitive).
+# The FIRST matching pattern wins. Values in the drawing's own units (see `units`).
+#
+#   closed:    what to do with closed outlines (polylines, circles, hatches)
+#              face    -> flat face            extrude -> push/pull by `height`
+#              edges   -> keep as lines only   skip    -> ignore
+#   open:      what to do with open lines/arcs
+#              edges   -> keep as lines        extrude -> vertical strip of `height`
+#              skip    -> ignore
+#   height:    extrusion height
+#   elevation: lift everything on the layer by this much
+#   color:     "#RRGGBB" material colour (default: the CAD layer colour)
+#   tag:       SketchUp tag name (default: the CAD layer name)
+#
+# Entities that already have a CAD "thickness" are always extruded by it.
+# Nested outlines on the same layer become holes (e.g. a wall's outer + inner line
+# makes a hollow wall ring), just like hatch islands.
+
+units: auto            # auto (read $INSUNITS) | mm | cm | m | in | ft
+fallback_units: mm     # used when the drawing is "unitless"
+curve_segments_per_circle: 48
+
+skip_layers:           # never imported
+  - Defpoints
+  - "*DIM*"
+  - "*TEXT*"
+  - "*ANNO*"
+
+default:
+  closed: face
+  open: edges
+
+layers:
+  "*WALL*":            # A-WALL, WALLS, S-WALL ...
+    closed: extrude
+    height: 3000       # 3 m if the drawing is in mm
+    color: "#E8E2D6"
+  "*COL*":
+    closed: extrude
+    height: 3000
+    color: "#B0B0B0"
+  "*FLOR*":
+    closed: face
+    color: "#C9B79C"
+  "*SLAB*":
+    closed: extrude
+    height: -150       # negative = downwards
+  "*GLAZ*":
+    color: "#9FD3F0"
+  "*FURN*":
+    closed: extrude
+    height: 750
+    color: "#A0703C"

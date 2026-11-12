@@ -1,0 +1,74 @@
+{
+  "source": "sample_floorplan.dxf",
+  "units": "millimeters",
+  "metres_per_unit": 0.001,
+  "extents": {
+    "x": [
+      0.0,
+      10000.0
+    ],
+    "y": [
+      0.0,
+      7000.0
+    ],
+    "z": [
+      0.0,
+      3000.0
+    ]
+  },
+  "layers": {
+    "A-WALL": {
+      "faces_or_solids": 2,
+      "extruded_walls": 0,
+      "edges": 0,
+      "meshes": 0
+    },
+    "A-FLOR": {
+      "faces_or_solids": 1,
+      "extruded_walls": 0,
+      "edges": 0,
+      "meshes": 0
+    },
+    "A-COLS": {
+      "faces_or_solids": 4,
+      "extruded_walls": 0,
+      "edges": 0,
+      "meshes": 0
+    },
+    "A-DOOR": {
+      "faces_or_solids": 0,
+      "extruded_walls": 0,
+      "edges": 2,
+      "meshes": 0
+    },
+    "A-GLAZ": {
+      "faces_or_solids": 0,
+      "extruded_walls": 1,
+      "edges": 0,
+      "meshes": 0
+    },
+    "A-FURN": {
+      "faces_or_solids": 1,
+      "extruded_walls": 0,
+      "edges": 0,
+      "meshes": 0
+    }
+  },
+  "entities_converted": {
+    "LWPOLYLINE": 7,
+    "HATCH": 1,
+    "LINE": 2,
+    "ARC": 1,
+    "CIRCLE": 1
+  },
+  "skipped": {
+    "TEXT": 1,
+    "DIMENSION": 1
+  },
+  "warnings": [],
+  "outputs": [
+    "sample_floorplan.dae",
+    "sample_floorplan.rb",
+    "sample_floorplan.png"
+  ]
+}
