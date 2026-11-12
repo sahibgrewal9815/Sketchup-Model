@@ -1,0 +1,92 @@
+{
+  "source": "Dilbagh.dwg",
+  "units": "inches",
+  "metres_per_unit": 0.0254,
+  "extents": {
+    "x": [
+      58254.639,
+      60119.208
+    ],
+    "y": [
+      -42001.568,
+      -39576.502
+    ],
+    "z": [
+      0.0,
+      0.0
+    ]
+  },
+  "layers": {
+    "V-Construction": {
+      "faces_or_solids": 2,
+      "extruded_walls": 0,
+      "edges": 3,
+      "meshes": 0
+    },
+    "0": {
+      "faces_or_solids": 24,
+      "extruded_walls": 0,
+      "edges": 2063,
+      "meshes": 0
+    },
+    "Layer15": {
+      "faces_or_solids": 0,
+      "extruded_walls": 0,
+      "edges": 64,
+      "meshes": 0
+    },
+    "TALLO": {
+      "faces_or_solids": 17,
+      "extruded_walls": 0,
+      "edges": 408,
+      "meshes": 0
+    },
+    "Layer14": {
+      "faces_or_solids": 0,
+      "extruded_walls": 0,
+      "edges": 1183,
+      "meshes": 0
+    },
+    "map": {
+      "faces_or_solids": 1,
+      "extruded_walls": 0,
+      "edges": 84,
+      "meshes": 0
+    },
+    "Layer13": {
+      "faces_or_solids": 1,
+      "extruded_walls": 0,
+      "edges": 47,
+      "meshes": 0
+    },
+    "4": {
+      "faces_or_solids": 9,
+      "extruded_walls": 0,
+      "edges": 0,
+      "meshes": 0
+    },
+    "L-tree": {
+      "faces_or_solids": 0,
+      "extruded_walls": 0,
+      "edges": 279,
+      "meshes": 0
+    }
+  },
+  "entities_converted": {
+    "LINE": 2099,
+    "LWPOLYLINE": 1555,
+    "ARC": 542,
+    "SOLID": 1,
+    "CIRCLE": 18,
+    "HATCH": 2
+  },
+  "skipped": {},
+  "warnings": [
+    "read DWG via LibreDWG JSON fallback (3201 entities)"
+  ],
+  "outputs": [
+    "Dilbagh.dae",
+    "Dilbagh.rb",
+    "Dilbagh.png"
+  ]
+}
