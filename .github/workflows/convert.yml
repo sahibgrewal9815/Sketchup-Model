@@ -1,0 +1,104 @@
+name: CAD → SketchUp
+
+# Runs whenever a DWG/DXF (or the layer rules) is pushed, or on demand from the Actions tab.
+on:
+  push:
+    paths:
+      - "cad2sketchup/input/**"
+      - "cad2sketchup/config/layers.yml"
+  workflow_dispatch:
+    inputs:
+      file:
+        description: "Only convert this file, e.g. input/plan.dwg. Leave empty for all."
+        required: false
+        default: ""
+
+permissions:
+  contents: write   # to commit the converted models back into output/
+
+concurrency:
+  group: cad2skp-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  LIBREDWG_VERSION: "0.13.4.8043"   # git tag of https://github.com/LibreDWG/libredwg
+
+jobs:
+  convert:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: cad2sketchup   # the project lives in this subfolder
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: cad2sketchup/converter/requirements.txt
+
+      - name: Install Python dependencies
+        run: pip install -r converter/requirements.txt
+
+      # ---- DWG support (LibreDWG's dwg2dxf), built once and cached -----------------
+      - name: Check for DWG files
+        id: dwg
+        run: |
+          if find input -iname '*.dwg' | grep -q .; then echo "needed=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Restore LibreDWG cache
+        if: steps.dwg.outputs.needed == 'true'
+        id: cache-dwg
+        uses: actions/cache@v4
+        with:
+          path: ~/libredwg
+          key: libredwg-${{ env.LIBREDWG_VERSION }}-${{ runner.os }}-noble
+
+      - name: Build LibreDWG
+        if: steps.dwg.outputs.needed == 'true' && steps.cache-dwg.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq autoconf automake libtool texinfo pkg-config
+          git clone -q --depth 1 --branch "$LIBREDWG_VERSION" --recurse-submodules --shallow-submodules \
+            https://github.com/LibreDWG/libredwg /tmp/libredwg-src
+          cd /tmp/libredwg-src
+          sh ./autogen.sh
+          ./configure --prefix="$HOME/libredwg" --disable-bindings --disable-docs --disable-python --enable-release
+          make -j2   # more parallel jobs can run out of memory
+          make install
+
+      - name: Put dwg2dxf on PATH
+        if: steps.dwg.outputs.needed == 'true'
+        run: |
+          echo "$HOME/libredwg/bin" >> "$GITHUB_PATH"
+          echo "LD_LIBRARY_PATH=$HOME/libredwg/lib" >> "$GITHUB_ENV"
+
+      # ---- Convert --------------------------------------------------------------
+      - name: Convert drawings
+        run: |
+          target="input"
+          if [ -n "${{ github.event.inputs.file }}" ]; then target="${{ github.event.inputs.file }}"; fi
+          python converter/cad2skp.py "$target" --outdir output --config config/layers.yml
+
+      - name: Smoke-test generated SketchUp scripts
+        run: |
+          shopt -s nullglob
+          for f in output/*.rb; do ruby tests/sketchup_stub.rb "$f" > /dev/null || { echo "::error file=$f::script failed"; exit 1; }; done
+
+      - name: Upload SketchUp files
+        uses: actions/upload-artifact@v4
+        with:
+          name: sketchup-models
+          path: cad2sketchup/output/
+          if-no-files-found: warn
+
+      - name: Commit results to output/
+        run: |
+          git config user.name  "cad2skp-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output/
+          if git diff --cached --quiet; then echo "No changes."; exit 0; fi
+          git commit -m "Convert CAD → SketchUp [skip ci]"
+          git pull --rebase --autostash
+          git push
