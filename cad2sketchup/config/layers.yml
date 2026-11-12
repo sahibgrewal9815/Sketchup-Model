@@ -22,6 +22,12 @@ units: auto            # auto (read $INSUNITS) | mm | cm | m | in | ft
 fallback_units: mm     # used when the drawing is "unitless"
 curve_segments_per_circle: 48
 
+# Per-file overrides (first matching filename pattern wins). Use this when a drawing's
+# saved units are wrong, or to add layer rules for just that drawing.
+files:
+  "Dilbagh*":
+    units: in          # file says feet, but it is drawn in inches (7'-1½" tank = 84 units)
+
 skip_layers:           # never imported
   - Defpoints
   - "*DIM*"

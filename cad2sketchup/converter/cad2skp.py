@@ -657,6 +657,12 @@ def write_preview(layers: dict[str, LayerGeom], path: Path, title: str):
 # ----------------------------------------------------------------------------
 def convert_file(src: Path, outdir: Path, cfg: dict, formats: set[str]) -> dict:
     outdir.mkdir(parents=True, exist_ok=True)
+    # Per-file overrides, e.g.  files: {"Dilbagh*": {units: in}}
+    for pat, over in (cfg.get("files") or {}).items():
+        if fnmatch.fnmatch(src.name.lower(), str(pat).lower()):
+            cfg = {**cfg, **{k: v for k, v in (over or {}).items() if k != "layers"},
+                   "layers": {**(over or {}).get("layers", {}), **(cfg.get("layers") or {})}}
+            break
     conv = Converter(cfg)
     with tempfile.TemporaryDirectory() as tmp:
         dxf = src
@@ -664,6 +670,12 @@ def convert_file(src: Path, outdir: Path, cfg: dict, formats: set[str]) -> dict:
             dxf = dwg_to_dxf(src, Path(tmp))
         doc, msgs = read_dxf(dxf)
         conv.warnings += msgs
+        if src.suffix.lower() == ".dwg" and len(doc.modelspace()) == 0:
+            # LibreDWG's DXF writer drops entities for some versions (e.g. AutoCAD 2007);
+            # rebuild the drawing from its JSON dump instead.
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import dwgjson
+            doc = dwgjson.build_doc(dwgjson.dump_json(src, Path(tmp)), conv.warnings)
         unit_name, m_per_unit = conv.resolve_units(doc)
         layers = conv.convert(doc)
 
